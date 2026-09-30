@@ -1,0 +1,38 @@
+# ── Rainfall Threshold Configuration ───────────────────────────
+# Spec §14: Choose the exact threshold convention ONCE and freeze it.
+# DO NOT change after seeing test results.
+
+# IMD operational heavy-rain thresholds (mm / 24h)
+thresholds:
+  light_moderate_upper: 35.4    # <35.5 mm
+  heavy:
+    label: "Heavy"
+    min_mm: 64.5
+    max_mm: 115.5
+  very_heavy:
+    label: "Very Heavy"
+    min_mm: 115.6
+    max_mm: 204.4
+  extreme:
+    label: "Extremely Heavy"
+    min_mm: 204.5
+    max_mm: null                # no upper bound
+
+# Rain / no-rain occurrence threshold
+occurrence:
+  rain_threshold_mm: 1.0        # grid cell counts as "rain" if >= 1 mm
+
+# FSS neighbourhood sizes to report (spec §28)
+fss_neighbourhoods_deg:
+  - 0.25
+  - 0.50
+  - 1.00
+
+# Correction budget limits (spec §17)
+repair_budget:
+  max_intensity_increase_pct: 90.0
+  max_intensity_decrease_pct: -20.0
+  max_spatial_shift_km: 50.0
+  note: >
+    Corrections outside these bounds are flagged as OUTSIDE SUPPORT.
+    The policy should reduce intervention confidence or retain baseline.

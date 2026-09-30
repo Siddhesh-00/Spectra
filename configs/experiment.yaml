@@ -1,0 +1,88 @@
+# ── Experiment Configuration ────────────────────────────────────
+# Spec §36: configs/experiment.yaml
+# Spec §47: Reproducibility Checklist — freeze before final testing
+
+experiment:
+  id: "spectra-4.1-mvp-maharashtra-2024"
+  version: "4.1.0"
+  description: >
+    SPECTRA 4.1 MVP — Maharashtra testbed.
+    Regime-aware NWP rainfall correction with selective intervention.
+    Spec §5: Development and validation domain = Maharashtra (Konkan + Western Ghats).
+
+# ── Geographic Domain (spec §5) ──────────────────────────────
+domain:
+  name: "Maharashtra / Konkan + Western Ghats"
+  lat_min: 15.5
+  lat_max: 22.5
+  lon_min: 72.0
+  lon_max: 80.5
+  focus_districts:
+    - Raigad
+    - Ratnagiri
+    - Thane
+    - Pune
+    - Sindhudurg
+    - Satara
+    - Mumbai
+
+# ── NWP Source (spec §4.1) ───────────────────────────────────
+nwp:
+  source: "GFS"
+  resolution_deg: 0.25
+  archive_url: "https://www.ready.noaa.gov/data/archives/gfs0p25/"
+  nomads_url: "https://nomads.ncep.noaa.gov/"
+  lead_times_hours: [24, 48, 72, 96]
+  forecast_cycles: ["00", "12"]   # UTC
+  variables_surface:
+    - APCP   # accumulated precipitation
+    - UGRD   # 10m U-wind
+    - VGRD   # 10m V-wind
+    - TMP    # 2m temperature
+    - RH     # 2m relative humidity
+    - PRMSL  # mean sea-level pressure
+  variables_pressure:
+    - UGRD_850hPa
+    - VGRD_850hPa
+    - RH_700hPa
+    - HGT_500hPa
+    - VVEL_500hPa
+
+# ── Observation Source (spec §4.2) ───────────────────────────
+observation:
+  primary:
+    name: "CHIRPS v3 daily"
+    resolution_deg: 0.05
+    url: "https://data.chc.ucsb.edu/products/CHIRPS/v3.0/"
+    license: "CC BY 4.0 / Public Domain"
+    limitation: >
+      CHIRPS is a gridded satellite+station estimate, not an official
+      IMD gauge-merged analysis. Clearly labelled in all outputs.
+  secondary:
+    name: "NASA GPM IMERG"
+    resolution_deg: 0.1
+    url: "https://gpm.nasa.gov/data/imerg"
+    note: "Optional — use only if storage permits"
+
+# ── Train / Validation / Test Split (spec §29) ──────────────
+splits:
+  strategy: "time_ordered_event_isolated"
+  train:
+    period: "2019-06-01 to 2023-08-31"
+    note: "Earlier monsoon seasons"
+  validation:
+    period: "2023-09-01 to 2024-05-31"
+  test:
+    period: "2024-06-01 to 2024-09-30"
+    note: >
+      FROZEN. Test set is used only ONCE for headline results.
+      No tuning after test set inspection (spec §29).
+
+# ── Random Seeds (spec §47) ──────────────────────────────────
+random_seeds:
+  global: 42
+  regime_model: 42
+  failure_model: 42
+  correction_model: 42
+  challenger_model: 42
+  bootstrap: 42

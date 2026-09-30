@@ -1,0 +1,61 @@
+# ── SPECTRA 4.1 — Root .gitignore ─────────────────────────────────
+
+# Environment variables — NEVER commit real credentials
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+venv/
+.venv/
+env/
+.eggs/
+*.egg-info/
+dist/
+build/
+
+# Node / Frontend
+App/node_modules/
+App/dist/
+App/dist-ssr/
+
+# Data directories (large files / raw downloads)
+data/raw/
+data/processed/
+data/interim/
+outputs/
+*.nc
+*.grib
+*.grib2
+*.h5
+*.hdf5
+
+# ML model artifacts (large binaries)
+models/*.pkl
+models/*.joblib
+models/*.onnx
+*.pkl
+*.joblib
+
+# Jupyter
+notebooks/.ipynb_checkpoints/
+*.ipynb_checkpoints/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# IDEs
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.sw?
+
+# Logs
+*.log
+logs/

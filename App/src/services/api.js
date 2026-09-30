@@ -1,0 +1,57 @@
+/**
+ * SPECTRA 4.1 — API Service Layer
+ * Connects the React frontend to the FastAPI backend.
+ * For the SIH demo, backend runs at localhost:8000.
+ * The backend returns seeded demo data without requiring Supabase credentials.
+ */
+
+const BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
+async function get(path) {
+  try {
+    const res = await fetch(`${BASE}${path}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.warn(`[SPECTRA API] ${path} failed — using local fallback`, err.message);
+    return null;
+  }
+}
+
+// ── Events (Screen 01) ────────────────────────────────────────────
+export async function fetchEvents({ district = '', pattern = '' } = {}) {
+  const params = new URLSearchParams();
+  if (district) params.set('district', district);
+  if (pattern)  params.set('weather_pattern', pattern);
+  const qs = params.toString() ? `?${params}` : '';
+  return get(`/api/events/${qs}`);
+}
+
+export async function fetchEventDetail(eventId) {
+  return get(`/api/events/${eventId}`);
+}
+
+// ── Forecast Diagnosis (Screen 02) ───────────────────────────────
+export async function fetchForecast(eventId) {
+  return get(`/api/forecast/${eventId}`);
+}
+
+// ── Correction (Screen 03) ────────────────────────────────────────
+export async function fetchCorrection(eventId) {
+  return get(`/api/correction/${eventId}`);
+}
+
+// ── District Product (Screen 04) ─────────────────────────────────
+export async function fetchDistricts(eventId) {
+  return get(`/api/district/${eventId}`);
+}
+
+// ── Verification (Screen 05) ──────────────────────────────────────
+export async function fetchVerification(eventId) {
+  return get(`/api/verification/${eventId}`);
+}
+
+// ── Health ────────────────────────────────────────────────────────
+export async function checkHealth() {
+  return get('/api/health');
+}

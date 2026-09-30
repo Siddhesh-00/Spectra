@@ -1,0 +1,56 @@
+# ── Train / Validation / Test Event Split ──────────────────────
+# Spec §29: time-ordered, event-isolated splits.
+# Entire events belong to exactly ONE partition.
+# DO NOT modify after test set inspection begins.
+
+split_strategy: "time_ordered_event_isolated"
+
+# Training events (earlier seasons)
+train_events:
+  period: "2019-06-01 to 2023-08-31"
+  regimes:
+    - Active Monsoon
+    - Break Monsoon
+    - Monsoon Low / Depression
+    - Coastal Rainfall
+    - Orographic
+    - Western Disturbance
+  note: "Expand from ~20 pilot events to all available once pipeline is validated"
+
+# Validation events (used for hyperparameter selection, NOT final reporting)
+validation_events:
+  period: "2023-09-01 to 2024-05-31"
+  note: "Model selection and threshold tuning happen here"
+
+# Test events (FROZEN — used once for headline result)
+test_events:
+  period: "2024-06-01 to 2024-09-30"
+  frozen: true
+  note: >
+    These 6 prototype events are from the 2024 Monsoon season.
+    They become the real test set once the ML pipeline is complete.
+  events:
+    - event_id: "MONSOON-DEP-07"
+      date: "2024-07-26"
+      district: "Raigad"
+      pattern: "ACTIVE MONSOON + MONSOON LOW"
+    - event_id: "MONSOON-DEP-05"
+      date: "2024-07-21"
+      district: "Ratnagiri"
+      pattern: "OFFSHORE TROUGH"
+    - event_id: "OROGRAPHIC-SURGE-02"
+      date: "2024-07-15"
+      district: "Pune (Ghats)"
+      pattern: "OROGRAPHIC SURGE"
+    - event_id: "OFFSHORE-TR-04"
+      date: "2024-08-03"
+      district: "Navsari"
+      pattern: "DEPRESSION REMNANT"
+    - event_id: "MONSOON-LOW-09"
+      date: "2024-08-11"
+      district: "Thane"
+      pattern: "ACTIVE MONSOON SURGE"
+    - event_id: "TROUGH-EMB-01"
+      date: "2024-09-02"
+      district: "Sindhudurg"
+      pattern: "COASTAL CONVERGENCE"

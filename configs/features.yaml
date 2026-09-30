@@ -1,0 +1,66 @@
+# ── Feature Configuration ───────────────────────────────────────
+# Spec §33: Add features in blocks — validate each block improves skill.
+
+# Block 1 — NWP rainfall only
+block_1_nwp_rainfall:
+  - precip_24h_mm           # raw GFS 24h accumulated precipitation
+  - precip_log1p            # log1p transform for skew
+  - precip_coverage_frac    # fraction of domain with rain > 1mm
+
+# Block 2 — NWP + atmospheric context
+block_2_atmospheric:
+  - u850_ms                 # 850 hPa U-wind
+  - v850_ms                 # 850 hPa V-wind
+  - wind850_speed_ms        # magnitude
+  - rh700_pct               # 700 hPa relative humidity
+  - hgt500_m                # 500 hPa geopotential height
+  - vort500_rel             # 500 hPa relative vorticity (derived)
+  - mslp_hpa                # mean sea-level pressure
+  - precip_anomaly_mm       # anomaly relative to local climatology
+
+# Block 3 — terrain / geography (spec §4.4)
+block_3_terrain:
+  - elevation_m
+  - slope_deg
+  - aspect_deg
+  - ruggedness_index
+  - local_relief_m
+  - windward_leeward_proxy  # +1 windward, -1 leeward
+  - coast_distance_km
+  - land_sea_mask           # 0=sea, 1=land
+  - lat
+  - lon
+
+# Block 4 — regime probabilities
+block_4_regime:
+  - regime_prob_active_monsoon
+  - regime_prob_break_monsoon
+  - regime_prob_monsoon_low
+  - regime_prob_coastal
+  - regime_prob_orographic
+  - regime_prob_western_disturbance
+  - regime_entropy           # uncertainty in regime classification
+
+# Block 5 — failure state
+block_5_failure:
+  - failure_conf_occurrence
+  - failure_conf_amount
+  - failure_conf_location
+  - failure_conf_structure
+  - failure_conf_tail
+
+# Block 6 — selective intervention (challenger features)
+block_6_challenger:
+  - correction_magnitude_mm
+  - correction_support_status   # 0=OUTSIDE, 0.5=MARGINAL, 1=OK
+  - ood_score                   # Mahalanobis / kNN distance
+  - regime_entropy
+  - challenger_confidence
+  - candidate_uncertainty
+
+# Time features (used in all blocks)
+time_features:
+  - month                   # 1–12
+  - day_of_year             # 1–366
+  - monsoon_week            # week within monsoon season
+  - lead_time_hours         # forecast lead time

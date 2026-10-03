@@ -1,6 +1,5 @@
-# SPECTRA 4.1
-## Synoptic Precipitation Error Correction & Temporal Rainfall Analysis
-### SIH26080 — Zero-Cost, Evaluator-Optimized MVP
+# SPECTRA
+## Selective Precipitation Error Correction and Targeted Rainfall Analysis
 
 > **Diagnose. Repair. Verify. Decide.**
 > SPECTRA earns the right to disagree with the forecast.

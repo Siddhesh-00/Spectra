@@ -5,7 +5,7 @@
  * if the backend is not running (spec §58.4: demo must work offline).
  */
 
-const API_BASE = 'http://localhost:8000/api';
+const API_BASE = '/api';
 
 async function apiFetch(path, opts = {}) {
   try {

@@ -5,7 +5,7 @@
  * The backend returns seeded demo data without requiring Supabase credentials.
  */
 
-const BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const BASE = '';
 
 async function get(path) {
   try {

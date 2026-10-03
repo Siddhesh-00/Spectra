@@ -1,13 +1,10 @@
 """
-SPECTRA 4.1 — FastAPI Backend
-Entry point. Spec §3: "Streamlit or a simple FastAPI + frontend for the demo"
+SPECTRA — FastAPI Backend
 
 Run:
     uvicorn main:app --reload --port 8000
 
-All endpoints are prefixed /api/* — the frontend (port 8080) calls these
-via fetch('/api/...') after you configure a reverse proxy, or directly as
-http://localhost:8000/api/... during local development.
+All endpoints are prefixed /api/*.
 """
 
 from fastapi import FastAPI
@@ -17,12 +14,7 @@ from routers import events, forecast, correction, district, verification
 import os
 
 app = FastAPI(
-    title="SPECTRA 4.1 API",
-    description=(
-        "Synoptic Precipitation Error Correction & Temporal Rainfall Analysis. "
-        "SIH26080 — Zero-Cost MVP backend."
-    ),
-    version="4.1.0",
+    title="SPECTRA",
     docs_url="/api/docs",
     redoc_url="/api/redoc",
     openapi_url="/api/openapi.json",
@@ -57,16 +49,11 @@ app.include_router(verification.router)
 async def health():
     return {
         "status": "ok",
-        "system": "SPECTRA 4.1",
-        "version": "4.1.0",
-        "spec_section": "§3 Zero-Cost MVP",
+        "system": "SPECTRA",
     }
 
 
 # ── Root ─────────────────────────────────────────────────────────
 @app.get("/", tags=["system"])
 async def root():
-    return {
-        "message": "SPECTRA 4.1 API — see /api/docs for interactive documentation",
-        "frontend": "Open http://localhost:8080/index.html",
-    }
+    return {"message": "SPECTRA API — see /api/docs for interactive documentation"}

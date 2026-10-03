@@ -1,8 +1,6 @@
 /**
- * SPECTRA 4.1 — API Service Layer
+ * SPECTRA — API Service Layer
  * Connects the React frontend to the FastAPI backend.
- * For the SIH demo, backend runs at localhost:8000.
- * The backend returns seeded demo data without requiring Supabase credentials.
  */
 
 const BASE = '';

@@ -191,11 +191,11 @@ export default function Screen01({ onNavigate }) {
         ${apiStatus === 'ok' ? 'border-secondary/30 bg-secondary/5 text-secondary' : 'border-outline-variant bg-surface-container-low text-outline'}`}>
         <Icon name={apiStatus === 'ok' ? 'cloud_done' : apiStatus === 'offline' ? 'cloud_off' : 'sync'} className="text-[14px]" />
         <span>
-          {apiStatus === 'ok'      ? 'Backend connected — SPECTRA API live at localhost:8000' :
+          {apiStatus === 'ok'      ? 'Backend connected — SPECTRA API live' :
            apiStatus === 'offline' ? 'Backend offline — showing local demo data · Run: cd Backend && python3 -m uvicorn main:app --reload' :
            'Connecting to SPECTRA API…'}
         </span>
-        <a href="http://localhost:8000/api/docs" target="_blank" rel="noreferrer" className="ml-auto font-mono text-[9px] uppercase opacity-70 hover:opacity-100 underline">
+        <a href="/api/docs" target="_blank" rel="noreferrer" className="ml-auto font-mono text-[9px] uppercase opacity-70 hover:opacity-100 underline">
           API DOCS ↗
         </a>
       </div>

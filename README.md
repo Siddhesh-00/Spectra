@@ -16,6 +16,9 @@ SPECTRA is a zero-cost, CPU-first system for post-processing rainfall forecasts.
 
 </div>
 
+> [!WARNING]
+> **SPECTRA is under active development.** The current interface uses seeded demonstration values while the scientific data, training, and validation pipeline is being completed. Real scientifically validated values will be displayed here as the system matures.
+
 ## About SPECTRA
 
 Numerical weather prediction can miss rainfall intensity, spatial placement, structure, timing, or the heavy-rain tail. SPECTRA makes those failure modes explicit and produces an explainable correction workflow.
@@ -160,7 +163,7 @@ spectra/
 
 ## Current status
 
-The repository contains a working interface and API prototype with seeded demonstration data. Demonstration values are not scientific results and must not be interpreted as operational forecasts.
+SPECTRA is under active development. The repository contains a working interface and API prototype with seeded demonstration data. Real scientific values will be added after the data, training, and event-held-out validation pipeline is complete. Current demonstration values are not scientific results and must not be interpreted as operational forecasts.
 
 ## License
 

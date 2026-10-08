@@ -12,7 +12,7 @@
 
 SPECTRA is a zero-cost, CPU-first system for post-processing rainfall forecasts. It predicts the weather regime and likely NWP failure mode, evaluates a constrained correction, estimates heavy-rain probabilities, and changes the baseline only when the intervention is supported.
 
-[Core workflow](#core-workflow) · [Architecture](#architecture) · [Run locally](#run-locally)
+[Core workflow](#core-workflow) · [Dashboard gallery](#dashboard-gallery) · [Architecture](#architecture) · [Run locally](#run-locally)
 
 </div>
 
@@ -160,10 +160,6 @@ spectra/
 ├── models/              Local model artifacts, ignored by Git
 └── outputs/             Generated products, ignored by Git
 ~~~
-
-## Current status
-
-SPECTRA is under active development. The repository contains a working interface and API prototype with seeded demonstration data. Real scientific values will be added after the data, training, and event-held-out validation pipeline is complete. Current demonstration values are not scientific results and must not be interpreted as operational forecasts.
 
 ## License
 

@@ -1,203 +1,243 @@
-# SPECTRA 4.1
-## Synoptic Precipitation Error Correction & Temporal Rainfall Analysis
-### SIH26080 — Zero-Cost, Evaluator-Optimized MVP
+<div align="center">
 
-> **Diagnose. Repair. Verify. Decide.**
-> SPECTRA earns the right to disagree with the forecast.
+<img src="Frontend/event_district_selection/screen.png" alt="SPECTRA event and district workspace" width="960" />
 
----
+# SPECTRA
 
-## Quick Start
+### Rainfall forecast intelligence for diagnosing, correcting, and verifying heavy-rain events
 
-### 1 — React Frontend (Vite + React + Leaflet)
-```bash
+[![React](https://img.shields.io/badge/React-19-149eca?logo=react&logoColor=white)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-8-646cff?logo=vite&logoColor=white)](https://vite.dev/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115%2B-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Leaflet](https://img.shields.io/badge/Maps-Leaflet-199900?logo=leaflet&logoColor=white)](https://leafletjs.com/)
+[![Prototype](https://img.shields.io/badge/status-prototype-f59e0b)](#data-status)
+
+**Diagnose. Repair. Verify. Decide.**
+
+SPECTRA is an evaluator-ready prototype for regime-aware numerical weather prediction (NWP) error correction. It turns a rainfall event into a traceable five-stage workflow: establish context, diagnose forecast failure, compare candidate corrections, produce district guidance, and verify model skill.
+
+[Explore the workflow](#how-it-works) · [Run locally](#quick-start) · [View the API](#api-surface)
+
+</div>
+
+> [!WARNING]
+> The current UI is a prototype replay using seeded demonstration data. It is designed to make the workflow inspectable—not to provide operational weather guidance or claim scientific performance.
+
+## Why SPECTRA?
+
+Raw precipitation forecasts often fail in more than one way: the event may be displaced, the intensity may be under-called, or the heavy-rain tail may be too weak. SPECTRA makes those failure modes explicit before suggesting a correction.
+
+| Capability | What it provides |
+| --- | --- |
+| **Event replay** | Select historical rainfall cases by date, district, lead time, and weather pattern. |
+| **Failure diagnosis** | Surface likely amount, location, structure, and heavy-tail errors with confidence. |
+| **Regime-aware correction** | Compare the original forecast with a candidate SPECTRA correction and held-out observation. |
+| **District products** | Translate a corrected rainfall field into district-level totals, thresholds, and decisions. |
+| **Verification** | Compare Raw NWP, statistical correction, generic ML, regime ML, and SPECTRA metrics. |
+| **Reproducibility** | Keep thresholds, splits, features, seeds, and experiment settings in versioned config files. |
+
+## Product tour
+
+The interface is intentionally built as an operational workstation rather than a single dashboard. Each stage leaves an auditable hand-off for the next stage.
+
+<details>
+<summary><strong>01 — Establish event context</strong></summary>
+
+Choose the historical event, forecast cycle, lead time, region, and district. The preview shows data availability and the observed rainfall context before any correction is considered.
+
+<img src="Frontend/event_district_selection/screen.png" alt="SPECTRA event and district selection screen" width="960" />
+
+</details>
+
+<details>
+<summary><strong>02 — Diagnose the forecast</strong></summary>
+
+Classify the dominant weather regime, identify likely NWP failure modes, and review the proposed correction with safety and support checks.
+
+<img src="Frontend/02_forecast_diagnosis/screen.png" alt="SPECTRA forecast diagnosis screen" width="960" />
+
+</details>
+
+<details>
+<summary><strong>03 — Compare before and after</strong></summary>
+
+Inspect synchronized raw NWP, corrected SPECTRA, observation, and difference views. The comparison is designed to make spatial shifts and intensity changes easy to interrogate.
+
+</details>
+
+<details>
+<summary><strong>04 — Produce the district product</strong></summary>
+
+Translate the corrected field into district-level rainfall and threshold probabilities, then sort the product by priority for decision support.
+
+<img src="Frontend/district_product_split_workstation/screen.png" alt="SPECTRA district product screen" width="960" />
+
+</details>
+
+<details>
+<summary><strong>05 — Verify model skill</strong></summary>
+
+Compare ETS, CSI, POD, FAR, FSS, and RMSE across models and rainfall thresholds. The prototype labels its seeded metrics as synthetic so they cannot be mistaken for held-out scientific results.
+
+</details>
+
+## How it works
+
+~~~mermaid
+flowchart LR
+    A[Historical event] --> B[Forecast context]
+    B --> C[Regime classifier]
+    C --> D[Failure diagnosis]
+    D --> E[Candidate correction]
+    E --> F[District aggregation]
+    F --> G[Verification]
+    G --> H[Auditable decision]
+
+    N[NOAA GFS] --> B
+    O[CHIRPS / observations] --> G
+    CFG[Versioned YAML configs] --> C
+    CFG --> D
+    CFG --> E
+    CFG --> G
+~~~
+
+## Architecture
+
+~~~text
+Spectra-69/
+├── App/                 React + Vite SPA, Leaflet maps, Chart.js analytics
+│   ├── src/screens/     Five workflow stages
+│   ├── src/components/  Layout, cards, badges, workflow primitives
+│   └── src/services/    Frontend → FastAPI service layer
+├── Backend/             FastAPI service with demo-ready seed data
+│   ├── routers/         Events, forecast, correction, district, verification
+│   └── db/              Supabase schema and production integration path
+├── configs/             Frozen experiment, threshold, feature, and split config
+├── src/                 ML pipeline package scaffold
+├── Frontend/            Design references and workflow screenshots
+├── data/                Local raw/processed data (gitignored)
+├── models/              Local model artifacts (gitignored)
+└── outputs/             Generated maps, tables, and reports (gitignored)
+~~~
+
+## Quick start
+
+### Prerequisites
+
+- Node.js 20+
+- Python 3.10+
+- npm
+
+### 1. Start the React application
+
+~~~bash
 cd App
 npm install
 npm run dev
-# Open http://localhost:5173
-```
+~~~
 
-> **Note:** The frontend runs in demo mode with seeded data. No Supabase credentials required.
+Open [http://localhost:5173](http://localhost:5173). The UI includes local fallback data, so it can be explored without a database or API key.
 
-### 2 — Backend (FastAPI — no Supabase required for demo)
-```bash
+### 2. Start the FastAPI backend
+
+In a second terminal:
+
+~~~bash
 cd Backend
-python -m venv venv && source venv/bin/activate   # Windows: venv\Scripts\activate
+python -m venv .venv
+source .venv/bin/activate       # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-
 python -m uvicorn main:app --reload --port 8000
-# API docs: http://localhost:8000/api/docs
-# Health:   http://localhost:8000/api/health
-```
+~~~
 
-> The backend runs entirely on **demo seed data** (`demo_seed.py`) — no Supabase account needed for the SIH demo evaluation. The `db/schema.sql` and Supabase integration are provided for the production pipeline path.
+The interactive API documentation is available at [http://localhost:8000/api/docs](http://localhost:8000/api/docs), and the health endpoint is [http://localhost:8000/api/health](http://localhost:8000/api/health).
 
-### 3 — (Optional) Supabase Setup for Real Data
-1. Go to **https://supabase.com** → Create a free project
-2. Dashboard → **SQL Editor** → paste `Backend/db/schema.sql` → Run
-3. Dashboard → **Settings → API** → copy `Project URL` + `anon public key`
-4. Copy `Backend/.env.example` → `Backend/.env` and fill in credentials
+### 3. Build and lint the frontend
 
----
+~~~bash
+cd App
+npm run lint
+npm run build
+~~~
 
-## Project Structure
+## API surface
 
-```
-Spectra-69/
-├── App/                         ← React + Vite frontend (5-screen SPA)
-│   ├── src/
-│   │   ├── screens/             ← Screen01–Screen05 components
-│   │   ├── components/          ← Layout, Primitives, SpectraTile
-│   │   └── services/api.js      ← API service layer (calls Backend)
-│   ├── .env.example             ← VITE_API_URL config
-│   └── package.json
-│
-├── Backend/                     ← FastAPI REST API (demo-ready, no DB required)
-│   ├── main.py                  ← App entry point (uvicorn main:app)
-│   ├── demo_seed.py             ← All 36 Maharashtra districts, seeded data
-│   ├── requirements.txt
-│   ├── .env.example             ← Copy to .env, add Supabase keys (optional)
-│   ├── routers/
-│   │   ├── events.py            ← GET /api/events
-│   │   ├── forecast.py          ← GET /api/forecast/{event_id}
-│   │   ├── correction.py        ← GET /api/correction/{event_id}
-│   │   ├── district.py          ← GET /api/district/{event_id}
-│   │   └── verification.py      ← GET /api/verification/metrics
-│   └── db/
-│       ├── supabase_client.py   ← Supabase connection (production path)
-│       └── schema.sql           ← All 9 tables + seed data
-│
-├── configs/                     ← Frozen experiment configs (spec §47)
-│   ├── experiment.yaml          ← Domain, NWP source, splits, seeds
-│   ├── thresholds.yaml          ← IMD Heavy/Very Heavy/Extreme thresholds
-│   ├── features.yaml            ← Feature blocks 1–6
-│   └── split.yaml               ← Train/val/test event lists
-│
-├── src/                         ← ML pipeline (spec §36)
-│   ├── ingest/                  ← GFS + CHIRPS data download
-│   ├── preprocessing/           ← Grid alignment, feature engineering
-│   ├── regime/                  ← Weather regime classifier (LightGBM)
-│   ├── failure/                 ← Forecast failure predictor
-│   ├── correction/              ← Correction engine (QM + ML)
-│   ├── challenger/              ← Leakage-safe challenger (spec §16)
-│   ├── probability/             ← Heavy rain probabilities (spec §14)
-│   ├── district/                ← District aggregation (spec §20)
-│   └── verification/            ← Metrics: CSI/ETS/POD/FAR/FSS (spec §27)
-│
-├── data/                        ← Raw + processed data (gitignored)
-├── models/                      ← Trained model artifacts (gitignored)
-├── outputs/                     ← Maps, district tables, reports
-└── notebooks/                   ← Exploration and analysis
-```
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| <code>GET</code> | <code>/api/health</code> | Service health check |
+| <code>GET</code> | <code>/api/events/</code> | List replayable rainfall events |
+| <code>GET</code> | <code>/api/events/{event_id}</code> | Retrieve event details |
+| <code>GET</code> | <code>/api/forecast/{event_id}</code> | Get regime and failure diagnosis |
+| <code>GET</code> | <code>/api/correction/{event_id}</code> | Get candidate correction summary |
+| <code>GET</code> | <code>/api/district/{event_id}</code> | Get district rainfall products |
+| <code>GET</code> | <code>/api/district/{event_id}/{district_name}</code> | Get one district product |
+| <code>GET</code> | <code>/api/district/search?q=...</code> | Search districts |
+| <code>GET</code> | <code>/api/verification/{event_id}</code> | Get event verification output |
+| <code>GET</code> | <code>/api/verification/metrics</code> | Compare model metrics |
+| <code>GET</code> | <code>/api/verification/ablation</code> | Get ablation results |
 
----
+## Data status
 
+The demo path is deliberately zero-cost and self-contained:
 
-## API Endpoints
+- **Forecast source:** NOAA GFS 0.25°
+- **Verification source:** CHIRPS v3 daily observations
+- **Maps:** OpenStreetMap, OpenTopoMap, and optional Esri imagery layers
+- **Storage:** local seeded data by default; Supabase integration is available as the production path
+- **Model status:** prototype pipeline scaffold with synthetic UI demonstration values
 
-| Method | Endpoint | Description | Frontend Screen |
-|--------|----------|-------------|-----------------|
-| GET | `/api/health` | Health check | — |
-| GET | `/api/events` | List all historical events | Screen 01 |
-| GET | `/api/events/{id}` | Full event detail | Screen 01 |
-| GET | `/api/forecast/{id}` | Regime + failure diagnosis | Screen 02 |
-| GET | `/api/correction/{id}` | Before/after comparison | Screen 03 |
-| GET | `/api/correction/{id}/{district}` | Single district correction | Screen 03/04 |
-| GET | `/api/district/{id}` | District product table | Screen 04 |
-| GET | `/api/district/{id}/{district}` | Single district detail | Screen 04 |
-| GET | `/api/verification/metrics` | Model comparison metrics | Screen 05 |
-| GET | `/api/verification/contingency` | Contingency table | Screen 05 |
-| GET | `/api/verification/ablation` | Ablation results | Screen 05 |
+Every demo number should be treated as SYNTHETIC_UI_DEMONSTRATION until it is replaced with a held-out real-data run. The frozen threshold, feature, split, and experiment configuration lives in [configs/](configs/).
 
-Interactive docs: **http://localhost:8000/api/docs**
+## Rainfall thresholds
 
----
+The prototype uses the following IMD-style categories, frozen in [configs/thresholds.yaml](configs/thresholds.yaml):
 
-## Supabase Tables
+| Category | 24-hour rainfall |
+| --- | ---: |
+| Light / Moderate | <code>&lt; 35.5 mm</code> |
+| Heavy | <code>64.5–115.5 mm</code> |
+| Very Heavy | <code>115.6–204.4 mm</code> |
+| Extremely Heavy | <code>≥ 204.5 mm</code> |
 
-| Table | Purpose | Spec Section |
-|-------|---------|-------------|
-| `events` | Historical rainfall events | §22 Event Replay |
-| `regime_predictions` | Regime probability vectors | §8 Classifier |
-| `failure_predictions` | Failure mode confidence | §9 Failure Model |
-| `correction_outputs` | REPLACE/COMBINE/KEEP + rainfall | §15 Decision |
-| `district_products` | District-level rainfall + risk | §20 District |
-| `verification_metrics` | CSI/ETS/POD/FAR/FSS by model | §27 Verification |
-| `contingency_counts` | Hits/misses/false alarms | §27 Verification |
-| `ablation_results` | Ablation study A–F | §25 Ablation |
-| `experiment_manifests` | Reproducibility lock | §47 Checklist |
+## Optional Supabase integration
 
----
+The API runs without Supabase. For the production data path:
 
-## Data Sources (Zero Cost — Spec §3)
+1. Create a free Supabase project.
+2. Apply [Backend/db/schema.sql](Backend/db/schema.sql) in the SQL editor.
+3. Copy [Backend/.env.example](Backend/.env.example) to Backend/.env.
+4. Add the project URL and anonymous key.
 
-| Data | Source | URL |
-|------|--------|-----|
-| NWP Forecasts | GFS 0.25° (NOAA) | https://nomads.ncep.noaa.gov/ |
-| GFS Archive | NOAA READY | https://www.ready.noaa.gov/data/archives/gfs0p25/ |
-| Verification | CHIRPS v3 daily | https://data.chc.ucsb.edu/products/CHIRPS/v3.0/ |
-| Optional precip | NASA GPM IMERG | https://gpm.nasa.gov/data/imerg |
-| Map tiles | CartoDB Light | Free, no API key |
+Never commit real credentials. Environment files are ignored by Git.
 
----
+## Reproducibility checklist
 
-## Weather Regime Classes (Spec §8)
-
-| Regime | Description |
-|--------|-------------|
-| Active Monsoon | Strong low-level westerlies |
-| Break Monsoon | Foothills trough shift |
-| Monsoon Low / Depression | BoB cyclonic shear vortex |
-| Coastal Rainfall | Offshore trough convergence |
-| Orographic | Windward ridge uplift |
-| Western Disturbance | Upper tropospheric westerly |
-
----
-
-## Rainfall Thresholds (IMD — Spec §14)
-
-| Category | Threshold |
-|----------|-----------|
-| Light / Moderate | < 35.5 mm |
-| Heavy | 64.5 – 115.5 mm |
-| Very Heavy | 115.6 – 204.4 mm |
-| **Extremely Heavy** | **≥ 204.5 mm** |
-
-> **Rule:** Thresholds frozen in `configs/thresholds.yaml` before final testing. Do not change after inspecting test results.
-
----
-
-## Reproducibility Checklist (Spec §47)
-
-- [ ] Dataset versions recorded in `experiment_manifests` table
-- [ ] Threshold config frozen in `configs/thresholds.yaml`
-- [ ] Feature list frozen in `configs/features.yaml`
-- [ ] Train/val/test events frozen in `configs/split.yaml`
-- [ ] Random seeds recorded in `configs/experiment.yaml`
+- [ ] Dataset versions recorded in the experiment manifest
+- [ ] Rainfall thresholds frozen before final testing
+- [ ] Feature list and train/validation/test events frozen
+- [ ] Random seeds recorded
 - [ ] No future-observation features used at inference time
-- [ ] Final test not used for tuning
-- [ ] All demo numbers labelled: VALIDATED / PROTOTYPE / SYNTHETIC
+- [ ] Final test set kept separate from tuning
+- [ ] Results labelled as validated, prototype, or synthetic
 
----
+## Contributing
 
-## Data Label Policy (Spec §43 / §23)
+Small, focused pull requests are welcome. Before opening one:
 
-| Label | Meaning |
-|-------|---------|
-| `VALIDATED_ON_HELD_OUT_REAL_DATA` | Green — real held-out result |
-| `PROTOTYPE_INTERNAL_VALIDATION` | Yellow — internal only |
-| `SYNTHETIC_UI_DEMONSTRATION` | Grey — prototype UI demo |
+~~~bash
+cd App
+npm run lint
+npm run build
+~~~
 
-> The current seed data is labelled `SYNTHETIC_UI_DEMONSTRATION`. Replace with real pipeline outputs as ML stages are completed.
+For changes to the scientific workflow, update the relevant config or spec alongside the implementation and clearly label whether the result is validated on held-out real data or remains a prototype demonstration.
 
----
+## License
 
-## Zero-Cost Constraint (Spec §3 / §58)
+No license file is currently included. Add a LICENSE before distributing the repository outside its intended project or evaluation context.
 
-✅ No paid APIs  
-✅ No paid map tiles (CartoDB free tier)  
-✅ No paid cloud compute  
-✅ No paid weather data (GFS + CHIRPS are public)  
-✅ Supabase free tier (no credit card for demo path)  
-✅ CPU-first ML (LightGBM, scikit-learn)  
-✅ Runs offline with frozen local test case  
+<div align="center">
+
+Made for transparent rainfall forecast correction — with every correction explained before it is trusted.
+
+</div>

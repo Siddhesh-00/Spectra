@@ -5,6 +5,10 @@
 .env.*
 !.env.example
 
+# Private project master specification — keep local, never publish
+spectra4.1.md
+SPECTRA_4.1_Judge_Optimized_Zero_Cost_MVP*.md
+
 # Python
 __pycache__/
 *.py[cod]

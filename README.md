@@ -4,123 +4,106 @@
 
 # SPECTRA
 
-### Rainfall forecast intelligence for diagnosing, correcting, and verifying heavy-rain events
+### Regime-aware rainfall forecast correction with failure diagnosis and selective intervention
 
 [![React](https://img.shields.io/badge/React-19-149eca?logo=react&logoColor=white)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-8-646cff?logo=vite&logoColor=white)](https://vite.dev/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115%2B-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![Leaflet](https://img.shields.io/badge/Maps-Leaflet-199900?logo=leaflet&logoColor=white)](https://leafletjs.com/)
-[![Prototype](https://img.shields.io/badge/status-prototype-f59e0b)](#data-status)
+[![Showcase](https://img.shields.io/badge/repository-showcase--only-7c3aed)](#license)
 
 **Diagnose. Repair. Verify. Decide.**
 
-SPECTRA is an evaluator-ready prototype for regime-aware numerical weather prediction (NWP) error correction. It turns a rainfall event into a traceable five-stage workflow: establish context, diagnose forecast failure, compare candidate corrections, produce district guidance, and verify model skill.
+SPECTRA is a zero-cost, CPU-first prototype for post-processing rainfall forecasts. It predicts the weather regime and likely NWP failure mode, evaluates a constrained correction, estimates heavy-rain probabilities, and changes the baseline only when the intervention is supported.
 
-[Explore the workflow](#how-it-works) · [Run locally](#quick-start) · [View the API](#api-surface)
+[Explore the workflow](#outputs) · [Run locally](#environment-setup) · [Review the license](#license)
 
 </div>
 
-> [!WARNING]
-> The current UI is a prototype replay using seeded demonstration data. It is designed to make the workflow inspectable—not to provide operational weather guidance or claim scientific performance.
+> [!IMPORTANT]
+> This is a public showcase repository. The current interface contains prototype replay and demonstration values. It is not an operational weather service, a nationwide validation claim, or a production-ready system.
 
-## Why SPECTRA?
+## Problem statement
 
-Raw precipitation forecasts often fail in more than one way: the event may be displaced, the intensity may be under-called, or the heavy-rain tail may be too weak. SPECTRA makes those failure modes explicit before suggesting a correction.
+Numerical weather prediction can miss rainfall intensity, spatial placement, structure, timing, or the heavy-rain tail. A correction system that changes every forecast can also introduce harmful changes when the baseline was already useful.
 
-| Capability | What it provides |
-| --- | --- |
-| **Event replay** | Select historical rainfall cases by date, district, lead time, and weather pattern. |
-| **Failure diagnosis** | Surface likely amount, location, structure, and heavy-tail errors with confidence. |
-| **Regime-aware correction** | Compare the original forecast with a candidate SPECTRA correction and held-out observation. |
-| **District products** | Translate a corrected rainfall field into district-level totals, thresholds, and decisions. |
-| **Verification** | Compare Raw NWP, statistical correction, generic ML, regime ML, and SPECTRA metrics. |
-| **Reproducibility** | Keep thresholds, splits, features, seeds, and experiment settings in versioned config files. |
+SPECTRA is designed around one testable claim:
 
-## Product tour
+> Improve heavy-rainfall forecast skill on unseen events while making fewer harmful changes than a system that corrects every forecast.
 
-The interface is intentionally built as an operational workstation rather than a single dashboard. Each stage leaves an auditable hand-off for the next stage.
+## Why SPECTRA
 
-<details>
-<summary><strong>01 — Establish event context</strong></summary>
+The system treats selective intervention as a first-class decision. REPLACE, COMBINE, and KEEP ORIGINAL are all valid outcomes. High uncertainty, unsupported corrections, or out-of-distribution conditions should reduce intervention rather than force a change.
 
-Choose the historical event, forecast cycle, lead time, region, and district. The preview shows data availability and the observed rainfall context before any correction is considered.
+The primary success criterion defined for the project is heavy-rainfall CSI at the operational Heavy threshold on unseen events, compared with Raw NWP and the strongest non-selective ML baseline. Secondary evidence includes FSS, ETS, POD, FAR, RMSE, probability calibration, beneficial intervention, harmful intervention, and correct abstention.
 
-<img src="Frontend/event_district_selection/screen.png" alt="SPECTRA event and district selection screen" width="960" />
+## Key innovation
 
-</details>
+- **Regime awareness:** condition the correction on physically meaningful rainfall regimes rather than using one global correction.
+- **Failure diagnosis:** predict likely occurrence, amount, location, structure, heavy-tail, and—when justified—timing failure.
+- **Selective intervention:** use a leakage-safe challenger and support checks before changing the baseline.
+- **Evidence before features:** require fair baselines, event-held-out validation, ablations, and uncertainty reporting before expanding the system.
 
-<details>
-<summary><strong>02 — Diagnose the forecast</strong></summary>
+## Outputs
 
-Classify the dominant weather regime, identify likely NWP failure modes, and review the proposed correction with safety and support checks.
+The prototype is organized around a five-stage operational experience:
 
-<img src="Frontend/02_forecast_diagnosis/screen.png" alt="SPECTRA forecast diagnosis screen" width="960" />
-
-</details>
+1. **Event / District** — select a historical event, district, forecast cycle, and lead time.
+2. **Forecast Diagnosis** — identify the dominant regime and likely forecast failure.
+3. **Before / After / Observation** — compare Raw NWP, candidate SPECTRA correction, observation, and difference.
+4. **District Product** — translate the corrected field into district rainfall and heavy-rain risk.
+5. **Verification** — compare models, thresholds, regimes, and intervention behavior.
 
 <details>
-<summary><strong>03 — Compare before and after</strong></summary>
+<summary><strong>Open the product tour</strong></summary>
 
-Inspect synchronized raw NWP, corrected SPECTRA, observation, and difference views. The comparison is designed to make spatial shifts and intensity changes easy to interrogate.
+### Event context
 
-</details>
+<img src="Frontend/event_district_selection/screen.png" alt="SPECTRA event and district selection" width="960" />
 
-<details>
-<summary><strong>04 — Produce the district product</strong></summary>
+### Forecast diagnosis
 
-Translate the corrected field into district-level rainfall and threshold probabilities, then sort the product by priority for decision support.
+<img src="Frontend/02_forecast_diagnosis/screen.png" alt="SPECTRA forecast diagnosis" width="960" />
 
-<img src="Frontend/district_product_split_workstation/screen.png" alt="SPECTRA district product screen" width="960" />
+### District product
 
-</details>
-
-<details>
-<summary><strong>05 — Verify model skill</strong></summary>
-
-Compare ETS, CSI, POD, FAR, FSS, and RMSE across models and rainfall thresholds. The prototype labels its seeded metrics as synthetic so they cannot be mistaken for held-out scientific results.
+<img src="Frontend/district_product_split_workstation/screen.png" alt="SPECTRA district product" width="960" />
 
 </details>
-
-## How it works
-
-~~~mermaid
-flowchart LR
-    A[Historical event] --> B[Forecast context]
-    B --> C[Regime classifier]
-    C --> D[Failure diagnosis]
-    D --> E[Candidate correction]
-    E --> F[District aggregation]
-    F --> G[Verification]
-    G --> H[Auditable decision]
-
-    N[NOAA GFS] --> B
-    O[CHIRPS / observations] --> G
-    CFG[Versioned YAML configs] --> C
-    CFG --> D
-    CFG --> E
-    CFG --> G
-~~~
 
 ## Architecture
 
-~~~text
-Spectra-69/
-├── App/                 React + Vite SPA, Leaflet maps, Chart.js analytics
-│   ├── src/screens/     Five workflow stages
-│   ├── src/components/  Layout, cards, badges, workflow primitives
-│   └── src/services/    Frontend → FastAPI service layer
-├── Backend/             FastAPI service with demo-ready seed data
-│   ├── routers/         Events, forecast, correction, district, verification
-│   └── db/              Supabase schema and production integration path
-├── configs/             Frozen experiment, threshold, feature, and split config
-├── src/                 ML pipeline package scaffold
-├── Frontend/            Design references and workflow screenshots
-├── data/                Local raw/processed data (gitignored)
-├── models/              Local model artifacts (gitignored)
-└── outputs/             Generated maps, tables, and reports (gitignored)
+~~~mermaid
+flowchart LR
+    A[Raw GFS NWP] --> B[Forecast-time features]
+    T[Terrain and season] --> B
+    B --> C[Weather regime classifier]
+    B --> D[Generic ML baseline]
+    C --> E[Forecast failure model]
+    D --> F[Regime-conditioned correction]
+    E --> F
+    F --> G[Leakage-safe challenger]
+    G --> H[REPLACE / COMBINE / KEEP]
+    H --> I[Rainfall and probability products]
+    I --> J[Grid and district output]
+    O[CHIRPS verification rainfall] --> K[Event-held-out verification]
+    J --> K
 ~~~
 
-## Quick start
+The repository contains the interactive React/FastAPI prototype and versioned experiment configuration. The broader scientific pipeline is intentionally evaluated against Raw NWP, Quantile Mapping, Generic ML, Regime ML, and SPECTRA baselines before any final claim is made.
+
+## Data sources
+
+The zero-cost MVP is scoped to Maharashtra, with emphasis on Konkan and the Western Ghats:
+
+- **Forecast:** NCEP GFS at 0.25° through public NOAA access.
+- **Primary verification:** CHIRPS v3 daily rainfall, regridded consistently to the verification grid.
+- **Optional supplementary rainfall:** NASA GPM IMERG when access and storage are manageable.
+- **Terrain:** openly accessible DEM-derived elevation, slope, aspect, relief, coastline distance, and land/sea features.
+- **Boundaries:** openly licensed administrative district boundaries with source and version recorded per run.
+
+CHIRPS is a zero-cost verification reference, not a substitute for an official IMD or NCMRWF operational analysis. The MVP must state that limitation clearly.
+
+## Environment setup
 
 ### Prerequisites
 
@@ -128,7 +111,7 @@ Spectra-69/
 - Python 3.10+
 - npm
 
-### 1. Start the React application
+### Start the interactive prototype
 
 ~~~bash
 cd App
@@ -136,9 +119,9 @@ npm install
 npm run dev
 ~~~
 
-Open [http://localhost:5173](http://localhost:5173). The UI includes local fallback data, so it can be explored without a database or API key.
+Open http://localhost:5173.
 
-### 2. Start the FastAPI backend
+### Start the API
 
 In a second terminal:
 
@@ -150,79 +133,9 @@ pip install -r requirements.txt
 python -m uvicorn main:app --reload --port 8000
 ~~~
 
-The interactive API documentation is available at [http://localhost:8000/api/docs](http://localhost:8000/api/docs), and the health endpoint is [http://localhost:8000/api/health](http://localhost:8000/api/health).
+Interactive API documentation: http://localhost:8000/api/docs
 
-### 3. Build and lint the frontend
-
-~~~bash
-cd App
-npm run lint
-npm run build
-~~~
-
-## API surface
-
-| Method | Endpoint | Purpose |
-| --- | --- | --- |
-| <code>GET</code> | <code>/api/health</code> | Service health check |
-| <code>GET</code> | <code>/api/events/</code> | List replayable rainfall events |
-| <code>GET</code> | <code>/api/events/{event_id}</code> | Retrieve event details |
-| <code>GET</code> | <code>/api/forecast/{event_id}</code> | Get regime and failure diagnosis |
-| <code>GET</code> | <code>/api/correction/{event_id}</code> | Get candidate correction summary |
-| <code>GET</code> | <code>/api/district/{event_id}</code> | Get district rainfall products |
-| <code>GET</code> | <code>/api/district/{event_id}/{district_name}</code> | Get one district product |
-| <code>GET</code> | <code>/api/district/search?q=...</code> | Search districts |
-| <code>GET</code> | <code>/api/verification/{event_id}</code> | Get event verification output |
-| <code>GET</code> | <code>/api/verification/metrics</code> | Compare model metrics |
-| <code>GET</code> | <code>/api/verification/ablation</code> | Get ablation results |
-
-## Data status
-
-The demo path is deliberately zero-cost and self-contained:
-
-- **Forecast source:** NOAA GFS 0.25°
-- **Verification source:** CHIRPS v3 daily observations
-- **Maps:** OpenStreetMap, OpenTopoMap, and optional Esri imagery layers
-- **Storage:** local seeded data by default; Supabase integration is available as the production path
-- **Model status:** prototype pipeline scaffold with synthetic UI demonstration values
-
-Every demo number should be treated as SYNTHETIC_UI_DEMONSTRATION until it is replaced with a held-out real-data run. The frozen threshold, feature, split, and experiment configuration lives in [configs/](configs/).
-
-## Rainfall thresholds
-
-The prototype uses the following IMD-style categories, frozen in [configs/thresholds.yaml](configs/thresholds.yaml):
-
-| Category | 24-hour rainfall |
-| --- | ---: |
-| Light / Moderate | <code>&lt; 35.5 mm</code> |
-| Heavy | <code>64.5–115.5 mm</code> |
-| Very Heavy | <code>115.6–204.4 mm</code> |
-| Extremely Heavy | <code>≥ 204.5 mm</code> |
-
-## Optional Supabase integration
-
-The API runs without Supabase. For the production data path:
-
-1. Create a free Supabase project.
-2. Apply [Backend/db/schema.sql](Backend/db/schema.sql) in the SQL editor.
-3. Copy [Backend/.env.example](Backend/.env.example) to Backend/.env.
-4. Add the project URL and anonymous key.
-
-Never commit real credentials. Environment files are ignored by Git.
-
-## Reproducibility checklist
-
-- [ ] Dataset versions recorded in the experiment manifest
-- [ ] Rainfall thresholds frozen before final testing
-- [ ] Feature list and train/validation/test events frozen
-- [ ] Random seeds recorded
-- [ ] No future-observation features used at inference time
-- [ ] Final test set kept separate from tuning
-- [ ] Results labelled as validated, prototype, or synthetic
-
-## Contributing
-
-Small, focused pull requests are welcome. Before opening one:
+### Verify the frontend
 
 ~~~bash
 cd App
@@ -230,14 +143,110 @@ npm run lint
 npm run build
 ~~~
 
-For changes to the scientific workflow, update the relevant config or spec alongside the implementation and clearly label whether the result is validated on held-out real data or remains a prototype demonstration.
+## Training
+
+The scientific training path is event-first rather than random-row-first:
+
+- freeze the event list before inspecting final results;
+- keep forecast-time features separate from future observations;
+- fit transformations and models only on the training events;
+- generate out-of-fold predictions for challenger training;
+- keep the final test events untouched until the final scorecard.
+
+The first model family is intentionally CPU-first: LightGBM or XGBoost for tabular ML, scikit-learn for preprocessing, calibration, and metrics, and xarray/netCDF4/cfgrib/eccodes for scientific data.
+
+## Inference
+
+At forecast issue time, SPECTRA uses only available forecast-time information. It produces:
+
+1. regime probabilities;
+2. forecast-failure probabilities;
+3. candidate corrected rainfall;
+4. heavy-rain probability outputs;
+5. correction confidence and support checks;
+6. a selective REPLACE, COMBINE, or KEEP ORIGINAL decision;
+7. grid and district-level products.
+
+Future observations are used to create historical labels and evaluate the system—not as inference-time inputs.
+
+## Evaluation
+
+Required deterministic metrics:
+
+- RMSE
+- CSI
+- ETS
+- POD
+- FAR
+- FSS at multiple neighborhood scales
+
+Required probabilistic and selective metrics include calibration, Brier score, reliability, beneficial intervention rate, harmful intervention rate, and correct abstention rate. Results must be reported by threshold, regime, event, and geographic stress test where applicable.
+
+## Results
+
+This public showcase currently presents a working prototype interface and seeded demonstration workflows. It does not claim validated scientific performance. Any future result must be labelled as one of:
+
+- VALIDATED_ON_HELD_OUT_REAL_DATA
+- PROTOTYPE_INTERNAL_VALIDATION
+- SYNTHETIC_UI_DEMONSTRATION
+
+No invented accuracy, nationwide validation, operational readiness, or unsupported confidence interpretation should be reported.
+
+## Reproducibility
+
+A credible run should preserve:
+
+- dataset versions and download timestamps;
+- forecast and observation source metadata;
+- random seeds;
+- train/validation/test event manifests;
+- frozen thresholds and feature lists;
+- exact scorecard command;
+- model version or checksum where practical;
+- limitations and uncertainty notes.
+
+The repository configuration files are the public reproducibility surface. Private planning material is intentionally excluded from version control.
+
+## Demo
+
+The preferred demonstration is a local event replay with a frozen package. A screen recording is the backup when connectivity is unavailable, and screenshots of the event replay, verification scorecard, district report, and README provide a stable fallback.
+
+The intended evaluator journey is:
+
+~~~text
+Problem → Idea → Working prototype → Real event → Fair baselines
+        → Heavy-rain evidence → Safe intervention → ₹0 feasibility
+~~~
+
+## Limitations
+
+- The MVP begins with a focused Maharashtra testbed, not all of India.
+- CHIRPS is a gridded satellite-plus-station estimate and can miss local extremes or complex-terrain effects.
+- Prototype values are not scientific results.
+- The system must not be called production-ready until deployment, monitoring, data freshness, and operational validation exist.
+- A correction must not be described as a future-error oracle; it predicts likely failure from forecast-time information.
+
+## Future scope
+
+1. Expand from the Maharashtra testbed to additional Indian rainfall regimes.
+2. Add and recalibrate geography-dependent features.
+3. Repeat event-held-out testing for each expanded domain.
+4. Add higher-priority official verification data when available.
+5. Publish scorecards, ablations, intervention tables, and probability reliability plots before making stronger claims.
+
+## Team
+
+The work is organized around four responsibilities:
+
+- **Data / Evaluation:** downloads, alignment, event extraction, splits, metrics, and scorecards.
+- **Regime / Failure ML:** regime labels, classifier, failure-state labels, and predictor.
+- **Correction / Decision:** Quantile Mapping, Generic ML, Regime ML, SPECTRA correction, challenger, and selective decision.
+- **Product / Demo:** local app, maps, district table, event replay, reliability, and presentation assets.
 
 ## License
 
-No license file is currently included. Add a LICENSE before distributing the repository outside its intended project or evaluation context.
+This repository is licensed under the [SPECTRA Showcase-Only License](LICENSE).
 
-<div align="center">
+The code, documentation, visual designs, screenshots, models, data arrangements, and other project materials are provided solely for public showcase and evaluation. No permission is granted to copy, fork, clone, download, reproduce, modify, adapt, distribute, sublicense, sell, publish elsewhere, incorporate into another project, deploy, or use any part of SPECTRA in production or commercial work without prior written permission from the copyright holder.
 
-Made for transparent rainfall forecast correction — with every correction explained before it is trusted.
-
-</div>
+GitHub hosting makes the repository visible for showcase purposes, but platform behavior cannot technically prevent viewing or forking. The license states the owner's restrictions; contact the owner for written permission.

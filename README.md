@@ -1,7 +1,5 @@
 <div align="center">
-
-<img src="Frontend/event_district_selection/screen.png" alt="SPECTRA event and district workspace" width="960" />
-
+    
 # SPECTRA
 
 ### Rainfall forecast intelligence for diagnosing, correcting, and verifying heavy-rain events

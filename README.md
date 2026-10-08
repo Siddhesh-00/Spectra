@@ -1,7 +1,5 @@
 <div align="center">
-
-<img src="Frontend/event_district_selection/screen.png" alt="SPECTRA event and district workspace" width="960" />
-
+    
 # SPECTRA
 
 ### Regime-aware rainfall forecast correction with failure diagnosis and selective intervention

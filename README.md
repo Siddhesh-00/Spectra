@@ -1,7 +1,5 @@
 <div align="center">
 
-<img src="Frontend/event_district_selection/screen.png" alt="SPECTRA event and district workspace" width="960" />
-
 # SPECTRA
 
 ### Regime-aware rainfall forecast correction with failure diagnosis and selective intervention
@@ -32,23 +30,6 @@ Selective intervention is central to the system. REPLACE, COMBINE, and KEEP ORIG
 4. **District Product** — translate the corrected field into district rainfall and heavy-rain risk.
 5. **Verification** — compare models, thresholds, regimes, and intervention behavior.
 
-<details>
-<summary><strong>View the interface</strong></summary>
-
-### Event context
-
-<img src="Frontend/event_district_selection/screen.png" alt="SPECTRA event and district selection" width="960" />
-
-### Forecast diagnosis
-
-<img src="Frontend/02_forecast_diagnosis/screen.png" alt="SPECTRA forecast diagnosis" width="960" />
-
-### District product
-
-<img src="Frontend/district_product_split_workstation/screen.png" alt="SPECTRA district product" width="960" />
-
-</details>
-
 ## What SPECTRA produces
 
 - Weather-regime probabilities.
@@ -59,6 +40,20 @@ Selective intervention is central to the system. REPLACE, COMBINE, and KEEP ORIG
 - REPLACE, COMBINE, or KEEP ORIGINAL decisions.
 - Grid-level and district-level rainfall products.
 - Verification metrics including RMSE, CSI, ETS, POD, FAR, FSS, calibration, and intervention behavior.
+
+## Dashboard gallery
+
+<table>
+  <tr>
+    <td align="center"><strong>Event / District</strong><br /><img src="Frontend/event_district_selection/screen.png" alt="SPECTRA event and district dashboard" width="360" /></td>
+    <td align="center"><strong>Forecast Diagnosis</strong><br /><img src="Frontend/02_forecast_diagnosis/screen.png" alt="SPECTRA forecast diagnosis dashboard" width="360" /></td>
+  </tr>
+  <tr>
+    <td align="center" colspan="2"><strong>District Product</strong><br /><img src="Frontend/district_product_split_workstation/screen.png" alt="SPECTRA district product dashboard" width="360" /></td>
+  </tr>
+</table>
+
+The repository currently contains three usable rendered dashboard images. Two additional screenshot paths are placeholder files and are intentionally not displayed here.
 
 ## Architecture
 

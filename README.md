@@ -2,7 +2,7 @@
 
 # SPECTRA
 
-### Regime-aware rainfall forecast correction with failure diagnosis and selective intervention
+### SPECTRA is an Regime aware post-processing layer for rainfall forecasts.
 
 [![React](https://img.shields.io/badge/React-19-149eca?logo=react&logoColor=white)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-8-646cff?logo=vite&logoColor=white)](https://vite.dev/)
@@ -56,7 +56,7 @@ Selective intervention is central to the system. REPLACE, COMBINE, and KEEP ORIG
   </tr>
 </table>
 
-The repository currently contains three usable rendered dashboard images. Two additional screenshot paths are placeholder files and are intentionally not displayed here.
+
 
 ## Architecture
 

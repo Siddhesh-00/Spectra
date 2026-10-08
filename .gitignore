@@ -26,6 +26,10 @@ App/node_modules/
 App/dist/
 App/dist-ssr/
 
+# Legacy HTML/CSS frontend kept locally only
+Frontend/
+Frontend-old/
+
 # Data directories (large files / raw downloads)
 data/raw/
 data/processed/

@@ -48,11 +48,11 @@ Selective intervention is central to the system. REPLACE, COMBINE, and KEEP ORIG
 
 <table>
   <tr>
-    <td align="center"><strong>Event / District</strong><br /><img src="Frontend/event_district_selection/screen.png" alt="SPECTRA event and district dashboard" width="360" /></td>
-    <td align="center"><strong>Forecast Diagnosis</strong><br /><img src="Frontend/02_forecast_diagnosis/screen.png" alt="SPECTRA forecast diagnosis dashboard" width="360" /></td>
+    <td align="center"><strong>Event / District</strong><br /><img src="docs/screenshots/event-district.png" alt="SPECTRA event and district dashboard" width="360" /></td>
+    <td align="center"><strong>Forecast Diagnosis</strong><br /><img src="docs/screenshots/forecast-diagnosis.png" alt="SPECTRA forecast diagnosis dashboard" width="360" /></td>
   </tr>
   <tr>
-    <td align="center" colspan="2"><strong>District Product</strong><br /><img src="Frontend/district_product_split_workstation/screen.png" alt="SPECTRA district product dashboard" width="360" /></td>
+    <td align="center" colspan="2"><strong>District Product</strong><br /><img src="docs/screenshots/district-product.png" alt="SPECTRA district product dashboard" width="360" /></td>
   </tr>
 </table>
 
@@ -155,7 +155,7 @@ spectra/
 │   └── db/              Database integration path
 ├── configs/             Experiment, threshold, feature, and split settings
 ├── src/                 Scientific pipeline package
-├── Frontend/            Workflow reference screens
+├── docs/screenshots/    Dashboard reference images
 ├── data/                Local data, ignored by Git
 ├── models/              Local model artifacts, ignored by Git
 └── outputs/             Generated products, ignored by Git
